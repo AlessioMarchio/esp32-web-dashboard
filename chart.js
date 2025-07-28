@@ -1,0 +1,1 @@
+/* Chart.js placeholder - usa CDN per deploy reale */

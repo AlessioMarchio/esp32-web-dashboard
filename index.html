@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>ESP32 Dashboard - Simulato</title>
+  <script src="chart.js"></script>
+  <style>
+    body { font-family: Arial; text-align: center; padding: 30px; }
+    canvas { max-width: 600px; margin: 0 auto; }
+  </style>
+</head>
+<body>
+  <h1>Temperatura ESP32 (Simulata)</h1>
+  <canvas id="tempChart"></canvas>
+
+  <script>
+    const ctx = document.getElementById('tempChart').getContext('2d');
+    const tempChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Temperatura (°C)',
+          data: [],
+          borderColor: 'red',
+          tension: 0.1
+        }]
+      }
+    });
+
+    async function fetchData() {
+      const res = await fetch('/data');
+      const json = await res.json();
+      const now = new Date().toLocaleTimeString();
+
+      if (tempChart.data.labels.length > 20) {
+        tempChart.data.labels.shift();
+        tempChart.data.datasets[0].data.shift();
+      }
+
+      tempChart.data.labels.push(now);
+      tempChart.data.datasets[0].data.push(json.temperature);
+      tempChart.update();
+    }
+
+    setInterval(fetchData, 2000);
+  </script>
+</body>
+</html>
